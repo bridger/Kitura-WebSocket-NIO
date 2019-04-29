@@ -67,10 +67,10 @@ public class WebSocketConnection {
             if let message = withMessage {
                 var buffer = context.channel.allocator.buffer(capacity: message.count)
                 buffer.writeString(message)
-                sendMessage(with: .ping, data: buffer)
+                self.sendMessage(with: .ping, data: buffer)
             } else {
                 let emptyBuffer = context.channel.allocator.buffer(capacity: 1)
-                sendMessage(with: .ping, data: emptyBuffer)
+                self.sendMessage(with: .ping, data: emptyBuffer)
             }
         }
     }
@@ -84,7 +84,7 @@ public class WebSocketConnection {
         context.eventLoop.execute {
             var buffer = context.channel.allocator.buffer(capacity: message.count)
             buffer.writeBytes(message)
-            sendMessage(with: asBinary ? .binary : .text, data: buffer)
+            self.sendMessage(with: asBinary ? .binary : .text, data: buffer)
         }
     }
 
