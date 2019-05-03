@@ -99,8 +99,8 @@ class KituraTest: XCTestCase {
         }
     }
 
-    func register(onPath: String? = nil, closeReason: WebSocketCloseReasonCode, testServerRequest: Bool = false, pingMessage: String? = nil) {
-        let service = TestWebSocketService(closeReason: closeReason, testServerRequest: testServerRequest, pingMessage: pingMessage)
+    func register(onPath: String? = nil, closeReason: WebSocketCloseReasonCode, testServerRequest: Bool = false, pingMessage: String? = nil, testQueryParams: Bool = false) {
+        let service = TestWebSocketService(closeReason: closeReason, testServerRequest: testServerRequest, pingMessage: pingMessage, testQueryParams: testQueryParams)
         WebSocket.register(service: service, onPath: onPath ?? servicePath)
     }
 
@@ -194,11 +194,14 @@ class HTTPResponseHandler: ChannelInboundHandler {
             if let errorMessage = errorMessage {
                 KituraTest.checkUpgradeFailureResponse(statusCode, errorMessage)
             } else {
-                KituraTest.checkUpgradeResponse(statusCode, secWebSocketAccept[0], key)
-                upgradeDoneOrRefused.signal()
+                XCTAssertEqual(secWebSocketAccept.count, 1, "Upgrade to WebSocket failed")
+                if secWebSocketAccept.count > 0 {
+                    KituraTest.checkUpgradeResponse(statusCode, secWebSocketAccept[0], key)
+                    upgradeDoneOrRefused.signal()
+                }
             }
         case .body(let buffer):
-            XCTAssertEqual(buffer.getString(at: 0, length: buffer.readableBytes) ?? "", errorMessage!)
+            XCTAssertEqual(buffer.getString(at: 0, length: buffer.readableBytes) ?? "", errorMessage ?? "No error message")
             upgradeDoneOrRefused.signal()
         default: break
         }
