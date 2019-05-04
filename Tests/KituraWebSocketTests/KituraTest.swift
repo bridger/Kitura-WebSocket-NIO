@@ -77,12 +77,12 @@ class KituraTest: XCTestCase {
         }
     }
 
-    func performTest(framesToSend: [(Bool, Int, NSData)], masked: [Bool] = [],
+    func performTest(onPath: String? = nil, framesToSend: [(Bool, Int, NSData)], masked: [Bool] = [],
                      expectedFrames: [(Bool, Int, NSData)], expectation: XCTestExpectation,
                      negotiateCompression: Bool = false, compressed: Bool = false) {
         precondition(masked.count == 0 || framesToSend.count == masked.count)
         let upgraded = DispatchSemaphore(value: 0)
-        guard let channel = sendUpgradeRequest(toPath: servicePath, usingKey: secWebKey, semaphore: upgraded, negotiateCompression: negotiateCompression) else { return }
+        guard let channel = sendUpgradeRequest(toPath: onPath ?? servicePath, usingKey: secWebKey, semaphore: upgraded, negotiateCompression: negotiateCompression) else { return }
         upgraded.wait()
         do {
             _ = try channel.pipeline.removeHandler(httpRequestEncoder!).wait()
