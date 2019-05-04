@@ -95,7 +95,9 @@ class TestWebSocketService: WebSocketService {
 
     public func received(message: String, from: WebSocketConnection) {
         if self.testQueryParams {
-            from.send(message: message + queryParams.keys.joined(separator: ",") + " and " + queryParams.values.joined(separator: ","))
+            let keys = queryParams.keys.sorted().joined(separator: ",")
+            let values = queryParams.values.sorted().joined(separator: ",")
+            from.send(message: "\(message)\(keys) and \(values)")
         } else {
             from.send(message: message)
         }
