@@ -28,7 +28,7 @@ public class WSConnectionUpgradeFactory: ProtocolHandlerFactory {
     init() {
         ConnectionUpgrader.register(handlerFactory: self)
         //We configure the default `permessage-deflate` extension here.
-        self.registerExtension(name: "permessage-deflate", impl: PermessageDeflate())
+        //self.registerExtension(name: "permessage-deflate", impl: PermessageDeflate())
     }
 
     /// Return a WebSocketConnection channel handler for the given request
